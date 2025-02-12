@@ -19,7 +19,7 @@ class EllipsisOverflowText extends StatelessWidget {
     this.textAlign,
     this.textDirection,
     this.textHeightBehavior,
-    this.textScaleFactor,
+    this.textScaler,
     this.textWidthBasis,
     this.showEllipsisOnBreakLineOverflow = false,
   })  : assert(data != '', 'text can\'t be empty.'),
@@ -88,15 +88,7 @@ class EllipsisOverflowText extends StatelessWidget {
   /// If false, the glyphs in the text will be positioned as if there was unlimited horizontal space.
   final bool? softWrap;
 
-  /// The number of font pixels for each logical pixel.
-  ///
-  /// For example, if the text scale factor is 1.5, text will be 50% larger than
-  /// the specified font size.
-  ///
-  /// The value given to the constructor as textScaleFactor. If null, will
-  /// use the [MediaQueryData.textScaleFactor] obtained from the ambient
-  /// [MediaQuery], or 1.0 if there is no [MediaQuery] in scope.
-  final double? textScaleFactor;
+  final TextScaler? textScaler;
 
   /// {@template flutter.widgets.Text.semanticsLabel}
   /// An alternative semantics label for this text.
@@ -186,12 +178,12 @@ class EllipsisOverflowText extends StatelessWidget {
   }
 
   List _loadData(
-      constraints, TextStyle style, double? textScale, int? maxLinesx) {
+      constraints, TextStyle style, TextScaler? textScaler, int? maxLinesx) {
     final textPainter = TextPainter(
       text: TextSpan(text: data, style: style),
       textDirection: TextDirection.ltr,
       locale: locale ?? style.locale,
-      textScaleFactor: textScale ?? 1,
+      textScaler: textScaler ?? TextScaler.noScaling,
       textHeightBehavior: textHeightBehavior,
       strutStyle: strutStyle,
     );
@@ -222,15 +214,15 @@ class EllipsisOverflowText extends StatelessWidget {
           );
         }
 
-        final textScale =
-            textScaleFactor ?? MediaQuery.textScaleFactorOf(context);
+        final textScaler =
+            this.textScaler ?? MediaQuery.maybeTextScalerOf(context);
 
         int? maxLines = this.maxLines ?? defaultTextStyle.maxLines;
 
         final r = _loadData(
           constraints,
           textStyle ?? const TextStyle(),
-          textScale,
+          textScaler,
           maxLines,
         );
 
@@ -247,7 +239,7 @@ class EllipsisOverflowText extends StatelessWidget {
           softWrap: softWrap,
           textDirection: textDirection,
           textWidthBasis: textWidthBasis,
-          textScaleFactor: textScale,
+          textScaler: textScaler,
           locale: locale,
           selectionColor: selectionColor,
           semanticsLabel: semanticsLabel,
