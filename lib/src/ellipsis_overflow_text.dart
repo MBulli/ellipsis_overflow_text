@@ -204,7 +204,7 @@ class EllipsisOverflowText extends StatelessWidget {
       builder: (context, constraints) {
         final defaultTextStyle = DefaultTextStyle.of(context);
 
-        TextStyle? textStyle;
+        TextStyle? textStyle = style;
         if (style == null || style!.inherit) {
           textStyle = defaultTextStyle.style.merge(style);
         }
